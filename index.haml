@@ -33,24 +33,211 @@
           %h1 What We'll Talk About
           %ul
             %li Networking and TCP
-            %li Front End Code
             %li Web Servers
             %li App Servers
-            %li Databases
-            %li Caching
             %li Rails
+            %li Caching
+            %li Databases
+            %li Front End Code
             %li Iaas (Amazon) vs PaaS (Heroku)
             %li Example Architectures
         %section
-          %h1 TCP
-            %ul Packet Loss
+          %h1 Why is Performance Important?
+          %ul.fragment
+            %li Attention Span
+            %li Frustration Levels
+            %li Converstion Rates
+            %li Reliability
+            %li
+              %a{ href: "http://www.webperformancetoday.com/2012/10/11/37-lessons-web-performance/"} Web Performance Lessons
+              and
+              %a{ href: "http://www.yottaa.com/blog/bid/265815/Coke-SodaStream-the-13-Websites-That-Crashed-During-Super-Bowl-2013" } Superbowl Website Failures
+        %section
+          %h1 It's not all about your code!
+          %ul
+            %li How much time does your code take run?
+            %li What's the total percentage?
+            %li Not much!
+        %section
+          %h1 Networking!
+          %h3 It's Mostly All About Networking
+          %p
+            What happens when you type an address in your browser?
+          %p.fragment
+            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation). 
+          %p.fragment
+            This is called the OSI model.
+        %section
+          %h1 TCP: How data flows from A to B
+          %ul
+            %li A node sends "packets"
+            %li Packets must be of a certain size (~1500 bytes, 64k max)
+            %li Only a certain amount of packets are allowed "in flight"
+            %li Packets are guaranteed, in-order delivery
+            %li Starts with a Three-Way handshake. Syn -> Syn Ack -> Ack
+        %section
+          %h1 How long does this take?
+          %ul.fragment
+            %li NYC to SFC: ~2530mi, RTT in vacuum: 27ms, RTT in fiber: 41.04ms
+            %li IP and Routes add delay.  (Check out Ping and Traceroute)
+            %li Remember the three way handshake?
+            %li Bandwidth may not matter
+            %li Connections are scarce, precious resources! (Why we have connection pooling)
+        %section
+          %h1 How does HTTP fit in?
+          %ul 
+            %li Application level protocol
+            %li Defines how requests and responses sit on top of http
+            %li Http 1.1: Keep-alive, pipelining
+            %li Browsers 6-8 connections per server
+            %li Think of 1mb of data split 1, 10, 100 ways
+        %section
+          %p
+            Most client-server optimization is about tuning for network latency and managing TCP connections.
+          %p
+            Networking isn't just about a browser and a server.  Intra and inter data center connections are important!
+          %p
+            Optimize for throughput:  keep data small, reduce latency, reduce connections.
+        %section
+          %h1 Web Servers!
+          %p
+            Web servers like nginx and apache handle http requests.
+          %p.fragment
+            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, node, etc.
+          %p.fragment
+            Sometimes it's a blurry line like node's websocket support.
+        %section
+          %h1 Threaded vs. Evented
+          %p
+            What is important are how connections are mapped to requests.
+          %p
+            Asynchoronous support and non-blocking io are also imporant.
+          %p
+            Heroku's big problem with Rails
+        %section
+          %h1 A Typical Scenario
+          %p
+            A front-facing web server (nginx/haproxy/varnish) distributes requests to an application server or pool of processes.
+          %p
+            EventMachine, Node, Twisted: Event loops.
+        %section
+          %h1 So what do web servers actually do?
+          %ul
+            %li Manage connections
+            %li Parse http requests
+            %li Handle streaming i/o
+            %li Add filters like gzip, authentication
+            %li Application servers: Allow you to program on top of http.
+        %section
+          %h1 Rack
+          %ul
+            %li A common interface between Ruby web servers and web frameworks.
+            %li Provides simple http primitives
+            %li Supports middleware
+        %section
+          %h1 What does a rails request look like?
+        %section
+          %h1 Node vs. Rails?
+          %p
+            The real question is, how do you want to program the web?
+        %section
+          %h1 Databases
+          %p
+            They're beasts!
+          %p
+            Sql - ACID
+          %p
+            NoSql - BASE
+          %p.fragment
+            Both have their own set of problems.
+        %section
+          %h1 Tuning Databases
+          %ul
+            %li In both cases, it's about indices.
+            %li Put your data in the way you want it out.
+            %li Learn to find slow queries.
+            %li Avoid n+1 queries (eager loading)
+        %section
+          %h1 Polygot Data Stores
+          %ul
+            %li Postgres, Mysql
+            %li Cassandra, Riak, HBase
+            %li MongoDb
+            %li Redis
+            %li Memcache
+        %section
+          %h1 Caching!
+          %ul
+            %li Html Caching
+            %li Fragment Caching
+            %li Object Caching
+          %p.fragment
+            How easy is it to expire your cache?
+        %section
+          %h1 Html caching
+          %ul
+            %li Uses http headers 
+            %li ETags, Cache-Control, Expires
+            %li Tools like Varnish are quite powerful
+        %section
+          %h1 Fragment Caching
+          %ul
+            %li Still Html!
+            %li More surgical
+        %section
+          %h1 Object Caching
+          %ul
+            %li Most common
+            %li Most flexible
+            %li Easy db integration
+            %li Memcache for reads
+            %li Redis for structure data
+            %li Compress (CPU cycles are there)
+          %p
+            You're just denormalizing data
+        %section
+          %h1 Client-side techniques
+          %ul
+            %li Sprites
+            %li Minification
+            %li Domain Sharding
+            %li cache-control
+            %li Async javascript
+            %li Image management
+            %li CDNs!
+        %section
+          %h1 Google's SPDY
+          %ul
+            %li One persistent SSL connection 
+            %li True Duplex, no waiting
+            %li Better window scaling
+            %li Compressed headers (cookies, etc)
+            %li Content Prioritization
+            %li Server Push
+        %section
+          %h1 Problem
+          %p
+            The server request/response time is very long.
+        %section
+          %h1 Problem
+          %p
+            The server request/response time is very fast, but when more load increases, times increase dramatically.
+        %section
+          %h1 Problem
+          %p
+            A page takes a long time to load, but the server time is very fast.
+        %section
+          %h1 Problem
+          %p
+            We are sending images to a bunch of customers.  Sending images is very slow, but nothing is maxed out.
+          %p
+            The problem increases when we try and send more images.
         %section
           %h1 Example Architectures
-            %ul
-              %li How would you design a news site?
-              %li How would you design an e-commerce site?
-              %li How would you design a social site?
-
+          %ul
+            %li How would you design a news site?
+            %li How would you design an e-commerce site?
+            %li How would you design a social site?
     %script{:src => "lib/js/head.min.js"}
     %script{:src => "js/reveal.min.js"}
     :javascript

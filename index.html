@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>reveal.js - The HTML Presentation Framework</title>
+    <meta content="A framework for easily creating beautiful presentations using HTML" name="description">
+    <meta content="Hakim El Hattab" name="author">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <link href="css/reveal.min.css" rel="stylesheet">
+    <link href="css/theme/default.css" id="theme" rel="stylesheet">
+    <!-- For syntax highlighting -->
+    <link href="lib/css/zenburn.css" rel="stylesheet">
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+    <!--[if lt IE 9]>
+      <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h1>Performance!</h1>
+          <p>
+            <a href="http://www.michaelhamrah.com">Michael Hamrah</a>
+            <span>||</span>
+            <a href="http://twitter.com/mhamrah">@mhamrah</a>
+          </p>
+          <p>
+            Software Engineer @ Getty Images
+          </p>
+        </section>
+        <section>
+          <h1>What We'll Talk About</h1>
+          <ul>
+            <li>Networking and TCP</li>
+            <li>Web Servers</li>
+            <li>App Servers</li>
+            <li>Rails</li>
+            <li>Caching</li>
+            <li>Databases</li>
+            <li>Front End Code</li>
+            <li>Iaas (Amazon) vs PaaS (Heroku)</li>
+            <li>Example Architectures</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Why is Performance Important?</h1>
+          <ul class="fragment">
+            <li>Attention Span</li>
+            <li>Frustration Levels</li>
+            <li>Converstion Rates</li>
+            <li>Reliability</li>
+            <li>
+              <a href="http://www.webperformancetoday.com/2012/10/11/37-lessons-web-performance/">Web Performance Lessons</a>
+              and
+              <a href="http://www.yottaa.com/blog/bid/265815/Coke-SodaStream-the-13-Websites-That-Crashed-During-Super-Bowl-2013">Superbowl Website Failures</a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h1>It's not all about your code!</h1>
+          <ul>
+            <li>How much time does your code take run?</li>
+            <li>What's the total percentage?</li>
+            <li>Not much!</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Networking!</h1>
+          <h3>It's Mostly All About Networking</h3>
+          <p>
+            What happens when you type an address in your browser?
+          </p>
+          <p class="fragment">
+            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation).
+          </p>
+          <p class="fragment">
+            This is called the OSI model.
+          </p>
+        </section>
+        <section>
+          <h1>TCP: How data flows from A to B</h1>
+          <ul>
+            <li>A node sends "packets"</li>
+            <li>Packets must be of a certain size (~1500 bytes, 64k max)</li>
+            <li>Only a certain amount of packets are allowed "in flight"</li>
+            <li>Packets are guaranteed, in-order delivery</li>
+            <li>Starts with a Three-Way handshake. Syn -> Syn Ack -> Ack</li>
+          </ul>
+        </section>
+        <section>
+          <h1>How long does this take?</h1>
+          <ul class="fragment">
+            <li>NYC to SFC: ~2530mi, RTT in vacuum: 27ms, RTT in fiber: 41.04ms</li>
+            <li>IP and Routes add delay.  (Check out Ping and Traceroute)</li>
+            <li>Remember the three way handshake?</li>
+            <li>Bandwidth may not matter</li>
+            <li>Connections are scarce, precious resources! (Why we have connection pooling)</li>
+          </ul>
+        </section>
+        <section>
+          <h1>How does HTTP fit in?</h1>
+          <ul>
+            <li>Application level protocol</li>
+            <li>Defines how requests and responses sit on top of http</li>
+            <li>Http 1.1: Keep-alive, pipelining</li>
+            <li>Browsers 6-8 connections per server</li>
+            <li>Think of 1mb of data split 1, 10, 100 ways</li>
+          </ul>
+        </section>
+        <section>
+          <p>
+            Most client-server optimization is about tuning for network latency and managing TCP connections.
+          </p>
+          <p>
+            Networking isn't just about a browser and a server.  Intra and inter data center connections are important!
+          </p>
+          <p>
+            Optimize for throughput:  keep data small, reduce latency, reduce connections.
+          </p>
+        </section>
+        <section>
+          <h1>Web Servers!</h1>
+          <p>
+            Web servers like nginx and apache handle http requests.
+          </p>
+          <p class="fragment">
+            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, node, etc.
+          </p>
+          <p class="fragment">
+            Sometimes it's a blurry line like node's websocket support.
+          </p>
+        </section>
+        <section>
+          <h1>Threaded vs. Evented</h1>
+          <p>
+            What is important are how connections are mapped to requests.
+          </p>
+          <p>
+            Asynchoronous support and non-blocking io are also imporant.
+          </p>
+          <p>
+            Heroku's big problem with Rails
+          </p>
+        </section>
+        <section>
+          <h1>A Typical Scenario</h1>
+          <p>
+            A front-facing web server (nginx/haproxy/varnish) distributes requests to an application server or pool of processes.
+          </p>
+          <p>
+            EventMachine, Node, Twisted: Event loops.
+          </p>
+        </section>
+        <section>
+          <h1>So what do web servers actually do?</h1>
+          <ul>
+            <li>Manage connections</li>
+            <li>Parse http requests</li>
+            <li>Handle streaming i/o</li>
+            <li>Add filters like gzip, authentication</li>
+            <li>Application servers: Allow you to program on top of http.</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Rack</h1>
+          <ul>
+            <li>A common interface between Ruby web servers and web frameworks.</li>
+            <li>Provides simple http primitives</li>
+            <li>Supports middleware</li>
+          </ul>
+        </section>
+        <section>
+          <h1>What does a rails request look like?</h1>
+        </section>
+        <section>
+          <h1>Node vs. Rails?</h1>
+          <p>
+            The real question is, how do you want to program the web?
+          </p>
+        </section>
+        <section>
+          <h1>Databases</h1>
+          <p>
+            They're beasts!
+          </p>
+          <p>
+            Sql - ACID
+          </p>
+          <p>
+            NoSql - BASE
+          </p>
+          <p class="fragment">
+            Both have their own set of problems.
+          </p>
+        </section>
+        <section>
+          <h1>Tuning Databases</h1>
+          <ul>
+            <li>In both cases, it's about indices.</li>
+            <li>Put your data in the way you want it out.</li>
+            <li>Learn to find slow queries.</li>
+            <li>Avoid n+1 queries (eager loading)</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Polygot Data Stores</h1>
+          <ul>
+            <li>Postgres, Mysql</li>
+            <li>Cassandra, Riak, HBase</li>
+            <li>MongoDb</li>
+            <li>Redis</li>
+            <li>Memcache</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Caching!</h1>
+          <ul>
+            <li>Html Caching</li>
+            <li>Fragment Caching</li>
+            <li>Object Caching</li>
+          </ul>
+          <p class="fragment">
+            How easy is it to expire your cache?
+          </p>
+        </section>
+        <section>
+          <h1>Html caching</h1>
+          <ul>
+            <li>Uses http headers</li>
+            <li>ETags, Cache-Control, Expires</li>
+            <li>Tools like Varnish are quite powerful</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Fragment Caching</h1>
+          <ul>
+            <li>Still Html!</li>
+            <li>More surgical</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Object Caching</h1>
+          <ul>
+            <li>Most common</li>
+            <li>Most flexible</li>
+            <li>Easy db integration</li>
+            <li>Memcache for reads</li>
+            <li>Redis for structure data</li>
+            <li>Compress (CPU cycles are there)</li>
+          </ul>
+          <p>
+            You're just denormalizing data
+          </p>
+        </section>
+        <section>
+          <h1>Client-side techniques</h1>
+          <ul>
+            <li>Sprites</li>
+            <li>Minification</li>
+            <li>Domain Sharding</li>
+            <li>cache-control</li>
+            <li>Async javascript</li>
+            <li>Image management</li>
+            <li>CDNs!</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Google's SPDY</h1>
+          <ul>
+            <li>One persistent SSL connection</li>
+            <li>True Duplex, no waiting</li>
+            <li>Better window scaling</li>
+            <li>Compressed headers (cookies, etc)</li>
+            <li>Content Prioritization</li>
+            <li>Server Push</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Problem</h1>
+          <p>
+            The server request/response time is very long.
+          </p>
+        </section>
+        <section>
+          <h1>Problem</h1>
+          <p>
+            The server request/response time is very fast, but when more load increases, times increase dramatically.
+          </p>
+        </section>
+        <section>
+          <h1>Problem</h1>
+          <p>
+            A page takes a long time to load, but the server time is very fast.
+          </p>
+        </section>
+        <section>
+          <h1>Problem</h1>
+          <p>
+            We are sending images to a bunch of customers.  Sending images is very slow, but nothing is maxed out.
+          </p>
+          <p>
+            The problem increases when we try and send more images.
+          </p>
+        </section>
+        <section>
+          <h1>Example Architectures</h1>
+          <ul>
+            <li>How would you design a news site?</li>
+            <li>How would you design an e-commerce site?</li>
+            <li>How would you design a social site?</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      	controls: true,
+      	progress: true,
+      	history: true,
+      	center: true,
+      
+      	theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+      	transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+      
+      	// Optional libraries used to extend on reveal.js
+      	dependencies: [
+      		{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      		{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      		{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      		{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      		{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      		{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      	]
+      });
+    </script>
+  </body>
+</html>
