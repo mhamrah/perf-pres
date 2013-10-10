@@ -95,11 +95,23 @@ module.exports = function(grunt) {
 			]
 		},
 
+    rubyHaml: {
+      app: {
+        files: {
+          "index.html" : "index.haml"
+        }
+      }
+    },
+
 		watch: {
 			main: {
 				files: [ 'Gruntfile.js', 'js/reveal.js', 'css/reveal.css' ],
 				tasks: 'default'
 			},
+      haml: {
+        files: [ 'index.haml' ],
+        tasks: 'rubyHaml'
+      },
 			theme: {
 				files: [ 'css/theme/source/*.scss', 'css/theme/template/*.scss' ],
 				tasks: 'themes'
@@ -116,9 +128,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-sass' );
 	grunt.loadNpmTasks( 'grunt-contrib-connect' );
 	grunt.loadNpmTasks( 'grunt-zip' );
+  grunt.loadNpmTasks( 'grunt-ruby-haml');
 
 	// Default task
-	grunt.registerTask( 'default', [ 'jshint', 'cssmin', 'uglify' ] );
+	grunt.registerTask( 'default', [ 'jshint', 'cssmin', 'uglify', 'rubyHaml' ] );
 
 	// Theme task
 	grunt.registerTask( 'themes', [ 'sass' ] );
