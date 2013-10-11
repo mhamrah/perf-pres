@@ -134,6 +134,7 @@
             %li A common interface between Ruby web servers and web frameworks.
             %li Provides simple http primitives
             %li Supports middleware
+            %li Ruby Runtimes: MRI, Rubinus, JRuby
         %section
           %h1 What does a rails request look like?
         %section
@@ -157,6 +158,12 @@
             %li Put your data in the way you want it out.
             %li Learn to find slow queries.
             %li Avoid n+1 queries (eager loading)
+        %section
+          %h1 Scaling Databases
+          %ul
+            %li How do you add more nodes?
+            %li Understand read/write patterns
+            %li Understand latency
         %section
           %h1 Polygot Data Stores
           %ul
@@ -195,6 +202,15 @@
             %li Compress (CPU cycles are there)
           %p
             You're just denormalizing data
+        %section
+          %h1 Queues!
+          %h3 They'll be your best friend.
+          %ul
+            %li Very Async
+            %li Great for handling spikes
+            %li Offload low-priority requests
+            %li Great for elastic workers
+            %li Resque, IronWorker, Amaazon SQS
         %section
           %h1 Client-side techniques
           %ul
