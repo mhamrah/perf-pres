@@ -25,12 +25,18 @@
           %h1 Performance!
           %p 
             %a{ href: 'http://www.michaelhamrah.com'} Michael Hamrah
-            %span ||
+            %span /
             %a{ href: 'http://twitter.com/mhamrah'} @mhamrah
           %p
             Software Engineer @ Getty Images
         %section
-          %h1 What We'll Talk About
+          %h1 Performance
+          %h4 vs. 
+          %h1 Scalability
+          %h4 vs. 
+          %h1 Reliability
+        %section
+          %h1 Talking Points 
           %ul
             %li Networking and TCP
             %li Web Servers
@@ -42,29 +48,26 @@
             %li Iaas (Amazon) vs PaaS (Heroku)
             %li Example Architectures
         %section
-          %h1 Why is Performance Important?
-          %ul.fragment
-            %li Attention Span
-            %li Frustration Levels
-            %li Converstion Rates
-            %li Reliability
-            %li
+          %h1 Why is this Important?
+          .fragment
+            %p Converstion Rates
+            %p Attention Span, Frustration Levels
+            %p Trust
+            %p
               %a{ href: "http://www.webperformancetoday.com/2012/10/11/37-lessons-web-performance/"} Web Performance Lessons
               and
               %a{ href: "http://www.yottaa.com/blog/bid/265815/Coke-SodaStream-the-13-Websites-That-Crashed-During-Super-Bowl-2013" } Superbowl Website Failures
         %section
           %h1 It's not all about your code!
-          %ul
-            %li How much time does your code take run?
-            %li What's the total percentage?
-            %li Not much!
+          %p Time spent in your code?
+          %p Overall percentage?
         %section
           %h1 Networking!
           %h3 It's Mostly All About Networking
           %p
             What happens when you type an address in your browser?
           %p.fragment
-            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation). 
+            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation)
           %p.fragment
             This is called the OSI model.
         %section
@@ -73,14 +76,14 @@
             %li A node sends "packets"
             %li Packets must be of a certain size (~1500 bytes, 64k max)
             %li Only a certain amount of packets are allowed "in flight"
-            %li Packets are guaranteed, in-order delivery
+            %li Packets are guaranteed delivery, in-order (different than UDP)
             %li Starts with a Three-Way handshake. Syn -> Syn Ack -> Ack
         %section
           %h1 How long does this take?
           %ul.fragment
             %li NYC to SFC: ~2530mi, RTT in vacuum: 27ms, RTT in fiber: 41.04ms
             %li IP and Routes add delay.  (Check out Ping and Traceroute)
-            %li Remember the three way handshake?
+            %li Remember the three way handshake? Latency.
             %li Bandwidth may not matter
             %li Connections are scarce, precious resources! (Why we have connection pooling)
         %section
@@ -103,23 +106,32 @@
           %p
             Web servers like nginx and apache handle http requests.
           %p.fragment
-            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, node, etc.
+            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, Node, etc.
           %p.fragment
-            Sometimes it's a blurry line like node's websocket support.
+            Sometimes it's a blurry line.  Depends on architecture.
         %section
           %h1 Threaded vs. Evented
           %p
-            What is important are how connections are mapped to requests.
+            How connections are mapped to requests
+          %p
+            How threads are mapped to requests.
+          %p
+            Memory usage and context switching.
+        %section
+          %h1 All about Async
           %p
             Asynchoronous support and non-blocking io are also imporant.
+          %p
+            EventMachine, Node, Twisted: Event loops.
           %p
             Heroku's big problem with Rails
         %section
           %h1 A Typical Scenario
-          %p
-            A front-facing web server (nginx/haproxy/varnish) distributes requests to an application server or pool of processes.
-          %p
-            EventMachine, Node, Twisted: Event loops.
+          %h3 Load Balancer -> WebServer -> App Server
+          %ul
+            %li Load Balancer Distributes Requests
+            %li Web Servers (nginx/haproxy/varnish) handles connections, static content
+            %li Application Servers or Process Pools respond to requests 
         %section
           %h1 So what do web servers actually do?
           %ul
@@ -129,20 +141,21 @@
             %li Add filters like gzip, authentication
             %li Application servers: Allow you to program on top of http.
         %section
+          %h1 Differences with Application Servers (and Runtimes!)
+          %ul
+            %li Thin, Unicorn, Puma, Passenger
+            %li MRI, Rubinus, JRuby
+            %li Node vs. Rails vs. Django vs. Whatever?
+        %section
           %h1 Rack
           %ul
             %li A common interface between Ruby web servers and web frameworks.
             %li Provides simple http primitives
             %li Supports middleware
-            %li Ruby Runtimes: MRI, Rubinus, JRuby
         %section
           %h1 What does a rails request look like?
         %section
-          %h1 Node vs. Rails?
-          %p
-            The real question is, how do you want to program the web?
-        %section
-          %h1 Databases
+          %h1 Databases!
           %p
             They're beasts!
           %p
@@ -157,7 +170,7 @@
             %li In both cases, it's about indices.
             %li Put your data in the way you want it out.
             %li Learn to find slow queries.
-            %li Avoid n+1 queries (eager loading)
+            %li Avoid n+1 queries (go for eager loading)
         %section
           %h1 Scaling Databases
           %ul
@@ -165,7 +178,7 @@
             %li Understand read/write patterns
             %li Understand latency
         %section
-          %h1 Polygot Data Stores
+          %h1 Polygot Data Landscape
           %ul
             %li Postgres, Mysql
             %li Cassandra, Riak, HBase
@@ -222,7 +235,7 @@
             %li Image management
             %li CDNs!
         %section
-          %1 PaaS vs. IaaS
+          %h1 PaaS vs. IaaS
           %ul
             %li How do you want to run your apps?
             %li What control do you want or need?

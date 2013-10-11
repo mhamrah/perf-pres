@@ -28,7 +28,7 @@
           <h1>Performance!</h1>
           <p>
             <a href="http://www.michaelhamrah.com">Michael Hamrah</a>
-            <span>||</span>
+            <span>/</span>
             <a href="http://twitter.com/mhamrah">@mhamrah</a>
           </p>
           <p>
@@ -36,7 +36,14 @@
           </p>
         </section>
         <section>
-          <h1>What We'll Talk About</h1>
+          <h1>Performance</h1>
+          <h4>vs.</h4>
+          <h1>Scalability</h1>
+          <h4>vs.</h4>
+          <h1>Reliability</h1>
+        </section>
+        <section>
+          <h1>Talking Points</h1>
           <ul>
             <li>Networking and TCP</li>
             <li>Web Servers</li>
@@ -50,26 +57,22 @@
           </ul>
         </section>
         <section>
-          <h1>Why is Performance Important?</h1>
-          <ul class="fragment">
-            <li>Attention Span</li>
-            <li>Frustration Levels</li>
-            <li>Converstion Rates</li>
-            <li>Reliability</li>
-            <li>
+          <h1>Why is this Important?</h1>
+          <div class="fragment">
+            <p>Converstion Rates</p>
+            <p>Attention Span, Frustration Levels</p>
+            <p>Trust</p>
+            <p>
               <a href="http://www.webperformancetoday.com/2012/10/11/37-lessons-web-performance/">Web Performance Lessons</a>
               and
               <a href="http://www.yottaa.com/blog/bid/265815/Coke-SodaStream-the-13-Websites-That-Crashed-During-Super-Bowl-2013">Superbowl Website Failures</a>
-            </li>
-          </ul>
+            </p>
+          </div>
         </section>
         <section>
           <h1>It's not all about your code!</h1>
-          <ul>
-            <li>How much time does your code take run?</li>
-            <li>What's the total percentage?</li>
-            <li>Not much!</li>
-          </ul>
+          <p>Time spent in your code?</p>
+          <p>Overall percentage?</p>
         </section>
         <section>
           <h1>Networking!</h1>
@@ -78,7 +81,7 @@
             What happens when you type an address in your browser?
           </p>
           <p class="fragment">
-            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation).
+            The TCP/IP Stack: Data Link, Network, Transport, Application (also Physical, Session, Presentation)
           </p>
           <p class="fragment">
             This is called the OSI model.
@@ -90,7 +93,7 @@
             <li>A node sends "packets"</li>
             <li>Packets must be of a certain size (~1500 bytes, 64k max)</li>
             <li>Only a certain amount of packets are allowed "in flight"</li>
-            <li>Packets are guaranteed, in-order delivery</li>
+            <li>Packets are guaranteed delivery, in-order (different than UDP)</li>
             <li>Starts with a Three-Way handshake. Syn -> Syn Ack -> Ack</li>
           </ul>
         </section>
@@ -99,7 +102,7 @@
           <ul class="fragment">
             <li>NYC to SFC: ~2530mi, RTT in vacuum: 27ms, RTT in fiber: 41.04ms</li>
             <li>IP and Routes add delay.  (Check out Ping and Traceroute)</li>
-            <li>Remember the three way handshake?</li>
+            <li>Remember the three way handshake? Latency.</li>
             <li>Bandwidth may not matter</li>
             <li>Connections are scarce, precious resources! (Why we have connection pooling)</li>
           </ul>
@@ -131,19 +134,31 @@
             Web servers like nginx and apache handle http requests.
           </p>
           <p class="fragment">
-            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, node, etc.
+            Application servers run programs which produce dynamic content. Think Thin, Unicorn, Puma, Node, etc.
           </p>
           <p class="fragment">
-            Sometimes it's a blurry line like node's websocket support.
+            Sometimes it's a blurry line.  Depends on architecture.
           </p>
         </section>
         <section>
           <h1>Threaded vs. Evented</h1>
           <p>
-            What is important are how connections are mapped to requests.
+            How connections are mapped to requests
           </p>
           <p>
+            How threads are mapped to requests.
+          </p>
+          <p>
+            Memory usage and context switching.
+          </p>
+        </section>
+        <section>
+          <h1>All about Async</h1>
+          <p>
             Asynchoronous support and non-blocking io are also imporant.
+          </p>
+          <p>
+            EventMachine, Node, Twisted: Event loops.
           </p>
           <p>
             Heroku's big problem with Rails
@@ -151,12 +166,12 @@
         </section>
         <section>
           <h1>A Typical Scenario</h1>
-          <p>
-            A front-facing web server (nginx/haproxy/varnish) distributes requests to an application server or pool of processes.
-          </p>
-          <p>
-            EventMachine, Node, Twisted: Event loops.
-          </p>
+          <h3>Load Balancer -> WebServer -> App Server</h3>
+          <ul>
+            <li>Load Balancer Distributes Requests</li>
+            <li>Web Servers (nginx/haproxy/varnish) handles connections, static content</li>
+            <li>Application Servers or Process Pools respond to requests</li>
+          </ul>
         </section>
         <section>
           <h1>So what do web servers actually do?</h1>
@@ -166,6 +181,14 @@
             <li>Handle streaming i/o</li>
             <li>Add filters like gzip, authentication</li>
             <li>Application servers: Allow you to program on top of http.</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Differences with Application Servers (and Runtimes!)</h1>
+          <ul>
+            <li>Thin, Unicorn, Puma, Passenger</li>
+            <li>MRI, Rubinus, JRuby</li>
+            <li>Node vs. Rails vs. Django vs. Whatever?</li>
           </ul>
         </section>
         <section>
@@ -180,13 +203,7 @@
           <h1>What does a rails request look like?</h1>
         </section>
         <section>
-          <h1>Node vs. Rails?</h1>
-          <p>
-            The real question is, how do you want to program the web?
-          </p>
-        </section>
-        <section>
-          <h1>Databases</h1>
+          <h1>Databases!</h1>
           <p>
             They're beasts!
           </p>
@@ -206,11 +223,19 @@
             <li>In both cases, it's about indices.</li>
             <li>Put your data in the way you want it out.</li>
             <li>Learn to find slow queries.</li>
-            <li>Avoid n+1 queries (eager loading)</li>
+            <li>Avoid n+1 queries (go for eager loading)</li>
           </ul>
         </section>
         <section>
-          <h1>Polygot Data Stores</h1>
+          <h1>Scaling Databases</h1>
+          <ul>
+            <li>How do you add more nodes?</li>
+            <li>Understand read/write patterns</li>
+            <li>Understand latency</li>
+          </ul>
+        </section>
+        <section>
+          <h1>Polygot Data Landscape</h1>
           <ul>
             <li>Postgres, Mysql</li>
             <li>Cassandra, Riak, HBase</li>
@@ -260,6 +285,17 @@
           </p>
         </section>
         <section>
+          <h1>Queues!</h1>
+          <h3>They'll be your best friend.</h3>
+          <ul>
+            <li>Very Async</li>
+            <li>Great for handling spikes</li>
+            <li>Offload low-priority requests</li>
+            <li>Great for elastic workers</li>
+            <li>Resque, IronWorker, Amaazon SQS</li>
+          </ul>
+        </section>
+        <section>
           <h1>Client-side techniques</h1>
           <ul>
             <li>Sprites</li>
@@ -269,6 +305,16 @@
             <li>Async javascript</li>
             <li>Image management</li>
             <li>CDNs!</li>
+          </ul>
+        </section>
+        <section>
+          <h1>PaaS vs. IaaS</h1>
+          <ul>
+            <li>How do you want to run your apps?</li>
+            <li>What control do you want or need?</li>
+            <li>Interesting AWS: IAM, ElasticCache, R53/ELB, ASG, Search, CloudFormation, OpWorks, Multi-AZ, Multi-Region</li>
+            <li>Cloud Services: Most tech is offered as SaaS</li>
+            <li>NewRelic, Loggly</li>
           </ul>
         </section>
         <section>
