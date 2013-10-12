@@ -2,9 +2,9 @@
 %html{:lang => "en"}
   %head
     %meta{:charset => "utf-8"}/
-    %title reveal.js - The HTML Presentation Framework
-    %meta{:content => "A framework for easily creating beautiful presentations using HTML", :name => "description"}/
-    %meta{:content => "Hakim El Hattab", :name => "author"}/
+    %title Things to Know About Performance
+    %meta{:content => "A talk I gave to the General Assembly's Apprentice Program on Performance", :name => "description"}/
+    %meta{:content => "Michael Hamrah", :name => "author"}/
     %meta{:content => "yes", :name => "apple-mobile-web-app-capable"}/
     %meta{:content => "black-translucent", :name => "apple-mobile-web-app-status-bar-style"}/
     %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", :name => "viewport"}/
@@ -90,7 +90,7 @@
           %h1 How does HTTP fit in?
           %ul 
             %li Application level protocol
-            %li Defines how requests and responses sit on top of http
+            %li Defines how requests and responses sit on top of TCP
             %li Http 1.1: Keep-alive, pipelining
             %li Browsers 6-8 connections per server
             %li Think of 1mb of data split 1, 10, 100 ways
@@ -98,7 +98,7 @@
           %p
             Most client-server optimization is about tuning for network latency and managing TCP connections.
           %p
-            Networking isn't just about a browser and a server.  Intra and inter data center connections are important!
+            Networking isn't just about a browser and a server.  Intra- and inter- data center connections are important!
           %p
             Optimize for throughput:  keep data small, reduce latency, reduce connections.
         %section
@@ -114,15 +114,17 @@
           %p
             How connections are mapped to requests
           %p
-            How threads are mapped to requests.
+            How threads are mapped to requests
           %p
-            Memory usage and context switching.
+            Memory usage and context switching
+          %p
+            How does your OS help?
         %section
           %h1 All about Async
           %p
-            Asynchoronous support and non-blocking io are also imporant.
+            Non-blocking io is essential in all cases
           %p
-            EventMachine, Node, Twisted: Event loops.
+            EventMachine, Node, Twisted: Event loops
           %p
             Heroku's big problem with Rails
         %section
@@ -135,14 +137,15 @@
         %section
           %h1 So what do web servers actually do?
           %ul
-            %li Manage connections
+            %li Very good at handling http connections
             %li Parse http requests
-            %li Handle streaming i/o
             %li Add filters like gzip, authentication
-            %li Application servers: Allow you to program on top of http.
+            %li Buffering, Caching
+            %li Reverse-Proxy support
         %section
           %h1 Differences with Application Servers (and Runtimes!)
           %ul
+            %li Allow you to program dynamic content
             %li Thin, Unicorn, Puma, Passenger
             %li MRI, Rubinus, JRuby
             %li Node vs. Rails vs. Django vs. Whatever?
@@ -152,8 +155,7 @@
             %li A common interface between Ruby web servers and web frameworks.
             %li Provides simple http primitives
             %li Supports middleware
-        %section
-          %h1 What does a rails request look like?
+            %li Can mix Rails and Sinatra endpoints
         %section
           %h1 Databases!
           %p
@@ -167,16 +169,16 @@
         %section
           %h1 Tuning Databases
           %ul
-            %li In both cases, it's about indices.
-            %li Put your data in the way you want it out.
+            %li In both cases, it's about indexes.
             %li Learn to find slow queries.
-            %li Avoid n+1 queries (go for eager loading)
+            %li Avoid n+1 queries (go for eager loading).
+            %li Optimize for read/write patterns.  
         %section
           %h1 Scaling Databases
           %ul
             %li How do you add more nodes?
-            %li Understand read/write patterns
-            %li Understand latency
+            %li Again, understand read/write patterns.
+            %li Understand latency.
         %section
           %h1 Polygot Data Landscape
           %ul
@@ -198,12 +200,14 @@
           %ul
             %li Uses http headers 
             %li ETags, Cache-Control, Expires
-            %li Tools like Varnish are quite powerful
+            %li Anonymous vs. Authenticated Users
+            %li How are you expiring cache?
         %section
           %h1 Fragment Caching
           %ul
             %li Still Html!
             %li More surgical
+            %li ESI make tools like Varnish quite powerful
         %section
           %h1 Object Caching
           %ul
@@ -211,7 +215,7 @@
             %li Most flexible
             %li Easy db integration
             %li Memcache for reads
-            %li Redis for structure data
+            %li Redis for structured data
             %li Compress (CPU cycles are there)
           %p
             You're just denormalizing data
@@ -223,7 +227,7 @@
             %li Great for handling spikes
             %li Offload low-priority requests
             %li Great for elastic workers
-            %li Resque, IronWorker, Amaazon SQS
+            %li Resque, IronWorker, Amazon SQS
         %section
           %h1 Client-side techniques
           %ul
@@ -232,14 +236,14 @@
             %li Domain Sharding
             %li cache-control
             %li Async javascript
-            %li Image management
+            %li Image management (WebP)
             %li CDNs!
         %section
           %h1 PaaS vs. IaaS
           %ul
             %li How do you want to run your apps?
             %li What control do you want or need?
-            %li Interesting AWS: IAM, ElasticCache, R53/ELB, ASG, Search, CloudFormation, OpWorks, Multi-AZ, Multi-Region
+            %li Other AWS Services: ElasticCache, R53/ELB, ASG, Search, CloudFormation, OpWorks, Multi-AZ, Multi-Region
             %li Cloud Services: Most tech is offered as SaaS
             %li NewRelic, Loggly
         %section
@@ -251,6 +255,12 @@
             %li Compressed headers (cookies, etc)
             %li Content Prioritization
             %li Server Push
+        %section
+          %h1 Examples
+          %ul
+            %li How would you design a news site?
+            %li How would you design an e-commerce site?
+            %li How would you design a social site?
         %section
           %h1 Problem
           %p
@@ -269,12 +279,6 @@
             We are sending images to a bunch of customers.  Sending images is very slow, but nothing is maxed out.
           %p
             The problem increases when we try and send more images.
-        %section
-          %h1 Example Architectures
-          %ul
-            %li How would you design a news site?
-            %li How would you design an e-commerce site?
-            %li How would you design a social site?
     %script{:src => "lib/js/head.min.js"}
     %script{:src => "js/reveal.min.js"}
     :javascript
@@ -299,3 +303,4 @@
       		{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
       	]
       });
+      var _gaq=[["_setAccount","UA-6576586-1"],["_trackPageview"]];(function(e,a){var c=e.createElement(a),b=e.getElementsByTagName(a)[0];c.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";b.parentNode.insertBefore(c,b)}(document,"script"));
